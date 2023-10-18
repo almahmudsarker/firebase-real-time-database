@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ref, push } from "firebase/database";
+import { ref, push, get, set } from "firebase/database";
 import "./AddModify.css";
-import App from "../firebase";
+import { useEffect } from "react";
+import database from "../firebase";
 
 const initialState = {
   name: "",
@@ -16,6 +17,8 @@ const AddModify = () => {
   const [state, setState] = useState(initialState);
   const navigate = useNavigate();
   const { name, email, contact, address } = state;
+  const [data, setData] = useState({});
+  const { id } = useParams();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -24,37 +27,74 @@ const AddModify = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const databaseRef = ref(App, "contacts");
+    const databaseRef = ref(database, "contacts");
 
     if (!state.name || !state.email || !state.contact || !state.address) {
       toast.error("Please provide a value for all fields");
     } else {
-      push(databaseRef, state, (error) => {
-        if (error) {
-          toast.error(error.message);
-        } else {
-          toast.success("Contact added successfully");
-          setState(initialState);
-          navigate("/");
-        }
-      });
+      if (id) {
+        // Editing an existing user
+        const userRef = ref(databaseRef, id);
+
+        set(userRef, state)
+          .then(() => {
+            toast.success("Contact updated successfully");
+            setState(initialState);
+            navigate("/");
+          })
+          .catch((error) => {
+            toast.error(error.message);
+          });
+      } else {
+        // Adding a new user
+        push(databaseRef, state)
+          .then(() => {
+            toast.success("Contact added successfully");
+            setState(initialState);
+            navigate("/");
+          })
+          .catch((error) => {
+            toast.error(error.message);
+          });
+      }
     }
   };
 
-  // useEffect(() => {
-  //   // If you need to load and edit an existing contact, you can do so here.
-  //   // For example, if you want to edit a contact with a specific key, you can retrieve it and update the state.
-  //   // const contactKey = 'YOUR_CONTACT_KEY';
-  //   // const contactRef = ref(App, `contacts/${contactKey}`);
-  //   // get(contactRef).then((snapshot) => {
-  //   //   if (snapshot.exists()) {
-  //   //     setState(snapshot.val());
-  //   //   } else {
-  //   //     console.error('Contact not found');
-  //   //     // Handle error or navigate to an error page.
-  //   //   }
-  //   // });
-  // }, []);
+  useEffect(() => {
+    const databaseRef = ref(database, "contacts");
+
+    get(databaseRef)
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          const dataSnapshot = snapshot.val();
+          const dataObject = {};
+
+          if (dataSnapshot) {
+            Object.keys(dataSnapshot).forEach((key) => {
+              dataObject[key] = dataSnapshot[key];
+            });
+          }
+          setData(dataObject);
+        } else {
+          setData({});
+        }
+      })
+      .catch((error) => {
+        console.error("Error getting data:", error);
+      });
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      setState({ ...data[id] });
+    } else {
+      setState({ ...initialState });
+    }
+
+    return () => {
+      setState({ ...initialState });
+    };
+  }, [id, data]);
 
   return (
     <div style={{ marginTop: "100px" }}>
@@ -72,7 +112,7 @@ const AddModify = () => {
           type="text"
           name="name"
           id="name"
-          value={name}
+          value={name || ""}
           onChange={handleInputChange}
           placeholder="Enter Your name"
         />
@@ -81,7 +121,7 @@ const AddModify = () => {
           type="email"
           name="email"
           id="email"
-          value={email}
+          value={email || ""}
           onChange={handleInputChange}
           placeholder="Enter Your email"
         />
@@ -90,7 +130,7 @@ const AddModify = () => {
           type="number"
           name="contact"
           id="contact"
-          value={contact}
+          value={contact || ""}
           onChange={handleInputChange}
           placeholder="Enter Your contact"
         />
@@ -99,12 +139,12 @@ const AddModify = () => {
           type="text"
           name="address"
           id="address"
-          value={address}
+          value={address || ""}
           onChange={handleInputChange}
           placeholder="Enter Your address"
         />
 
-        <input type="submit" value="Save" />
+        <input type="submit" value={id ? "update" : "save"} />
       </form>
     </div>
   );

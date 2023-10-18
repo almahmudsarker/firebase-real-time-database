@@ -17,7 +17,7 @@ const Header = () => {
   }, [location]);
   return (
     <div className="header">
-      <p className="logo">Contact App</p>
+      <p className="logo">User Management</p>
       <div className="header-right">
         <Link to="/">
           <p
