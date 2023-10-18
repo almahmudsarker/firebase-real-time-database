@@ -7,7 +7,7 @@ A simple CRUD (Create, Read, Update, Delete) application built with React and Fi
 
 ## Live Demo
 
-Check out the live demo of the application: [Live Demo](https://65304b761081380b157496c8--shiny-selkie-dd8a4c.netlify.app)
+Check out the live demo of the application: [Live Demo](https://shiny-selkie-dd8a4c.netlify.app)
 
 ## Features
 
