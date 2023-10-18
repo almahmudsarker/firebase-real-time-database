@@ -9,18 +9,15 @@ const DetailsView = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    // Create a reference to the user's data in the database
     const userRef = ref(database, `contacts/${id}`);
 
     // Fetch user details from the database
     get(userRef)
       .then((snapshot) => {
         if (snapshot.exists()) {
-          // Data exists, so set the user state
           const userData = snapshot.val();
           setUser(userData);
         } else {
-          // Data doesn't exist, handle as needed (e.g., show a message)
           setUser({});
         }
       })
@@ -48,8 +45,12 @@ const DetailsView = () => {
           <span>{user.email}</span>
           <br />
           <br />
-          <strong>Contact: </strong>
-          <span>{user.contact}</span>
+          <strong>Age: </strong>
+          <span>{user.age}</span>
+          <br />
+          <br />
+          <strong>Gender: </strong>
+          <span>{user.gender}</span>
           <br />
           <br />
           <strong>Address: </strong>

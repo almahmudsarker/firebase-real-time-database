@@ -9,14 +9,15 @@ import database from "../firebase";
 const initialState = {
   name: "",
   email: "",
-  contact: "",
+  age: "",
+  gender: "",
   address: "",
 };
 
 const AddModify = () => {
   const [state, setState] = useState(initialState);
   const navigate = useNavigate();
-  const { name, email, contact, address } = state;
+  const { name, email, age, gender, address } = state;
   const [data, setData] = useState({});
   const { id } = useParams();
 
@@ -29,7 +30,13 @@ const AddModify = () => {
     e.preventDefault();
     const databaseRef = ref(database, "contacts");
 
-    if (!state.name || !state.email || !state.contact || !state.address) {
+    if (
+      !state.name ||
+      !state.email ||
+      !state.age ||
+      !state.gender ||
+      !state.address
+    ) {
       toast.error("Please provide a value for all fields");
     } else {
       if (id) {
@@ -125,14 +132,23 @@ const AddModify = () => {
           onChange={handleInputChange}
           placeholder="Enter Your email"
         />
-        <label htmlFor="contact">Contact</label>
+        <label htmlFor="age">Age</label>
         <input
           type="number"
-          name="contact"
-          id="contact"
-          value={contact || ""}
+          name="age"
+          id="age"
+          value={age || ""}
           onChange={handleInputChange}
-          placeholder="Enter Your contact"
+          placeholder="Enter Your age"
+        />
+        <label htmlFor="gender">Gender</label>
+        <input
+          type="text"
+          name="gender"
+          id="gender"
+          value={gender || ""}
+          onChange={handleInputChange}
+          placeholder="Enter Your gender"
         />
         <label htmlFor="address">Address</label>
         <input

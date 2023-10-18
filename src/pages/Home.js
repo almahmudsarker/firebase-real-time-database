@@ -59,7 +59,8 @@ const Home = () => {
             <th style={{ textAlign: "center" }}>No.</th>
             <th style={{ textAlign: "center" }}>Name</th>
             <th style={{ textAlign: "center" }}>Email</th>
-            <th style={{ textAlign: "center" }}>Contact</th>
+            <th style={{ textAlign: "center" }}>Age</th>
+            <th style={{ textAlign: "center" }}>Gender</th>
             <th style={{ textAlign: "center" }}>Address</th>
             <th style={{ textAlign: "center" }}>Actions</th>
           </tr>
@@ -70,18 +71,19 @@ const Home = () => {
               <th scope="row">{index + 1}</th>
               <td>{data[id].name}</td>
               <td>{data[id].email}</td>
-              <td>{data[id].contact}</td>
+              <td>{data[id].age}</td>
+              <td>{data[id].gender}</td>
               <td>{data[id].address}</td>
               <td>
+                <Link to={`/view/${id}`}>
+                  <button className="btn btn-view">View</button>
+                </Link>
                 <Link to={`/update/${id}`}>
                   <button className="btn btn-edit">Edit</button>
                 </Link>
                 <button className="btn btn-delete" onClick={() => onDelete(id)}>
                   Delete
                 </button>
-                <Link to={`/view/${id}`}>
-                  <button className="btn btn-view">View</button>
-                </Link>
               </td>
             </tr>
           ))}
